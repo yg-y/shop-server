@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.manager.api.mapper.ShopOrderInfoMapper">
+
+    <select id="page" resultType="com.shop.manager.api.entity.OrderInfo">
+        SELECT
+        o.id,
+        o.shop_info_id,
+        o.payment_price,
+        o.user_id,
+        o.order_number,
+        o.number,
+        o.`status`,
+        o.back_price,
+        o.create_time,
+        o.update_time,
+        s.`name` shopName,
+        su.`name` buyerName
+        FROM shop_order_info o LEFT JOIN shop_info s ON o.shop_info_id = s.id
+        LEFT JOIN shop_user su ON o.user_id = su.id
+        <where>
+            ${ew.sqlSegment}
+        </where>
+    </select>
+</mapper>
