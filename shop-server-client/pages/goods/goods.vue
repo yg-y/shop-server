@@ -164,7 +164,7 @@
 			getProductInfo() {
 				let shopInfoId = this.shopId
 				uni.request({
-					url: "http://127.0.0.1:1222/shop_api/shop-info/byId/" + shopInfoId,
+					url: "/shop_api/shop-info/byId/" + shopInfoId,
 					success: res => {
 						console.log(res)
 						this.goodsData = res.data.data;
@@ -193,13 +193,49 @@
 			},
 			// 加入购物车
 			joinCart() {
-				uni.showToast({
-					title: "已加入购物车"
-				});
+				//status 0 代表未付款 则是在购物车中
+				let orderInfo = {
+					"number": 1,
+					"shopInfoIds": this.shopId,
+					"status": 0
+				}
+				uni.request({
+					url: "/shop_api/shop-order-info/add/order",
+					method: 'POST',
+					data: orderInfo,
+					success: res => {
+						if (res.data.code === 1) {
+							uni.showToast({
+								title: "已加入购物车"
+							});
+						} else {
+							uni.showToast({
+								title: "加入购物车失败"
+							});
+						}
+					},
+					fail: () => {},
+					complete: () => {}
+				})
 			},
 			//立即购买
 			buy() {
-				this.toConfirmation();
+				//校验用户是否登录，没有登录跳转到登录注册页面
+				uni.request({
+					url: "/shop_api/shop-user/info",
+					method: 'GET',
+					success: res => {
+						if (res.data.code === 0 && res.data.data === 'not login') {
+							uni.navigateTo({
+								url: '../login/login'
+							})
+						} else {
+							this.toConfirmation();
+						}
+					},
+					fail: () => {},
+					complete: () => {}
+				})
 			},
 			//跳转确认订单页面
 			toConfirmation() {

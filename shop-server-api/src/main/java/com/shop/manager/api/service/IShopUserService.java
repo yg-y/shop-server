@@ -20,4 +20,6 @@ public interface IShopUserService extends IService<ShopUser> {
     R addUser(ShopUser shopUser);
 
     R editUser(ShopUser shopUser);
+
+    R loginByClient(ShopUser shopUser);
 }

@@ -1,16 +1,20 @@
 package com.shop.manager.entity;
 
 import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author admin
@@ -28,11 +32,15 @@ public class ShopOrderInfo implements Serializable {
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+    @TableField(exist = false)
+    private String ids;
 
     /**
      * 商品ID
      */
     private Integer shopInfoId;
+    @TableField(exist = false)
+    private String shopInfoIds;
 
     /**
      * 付款价格

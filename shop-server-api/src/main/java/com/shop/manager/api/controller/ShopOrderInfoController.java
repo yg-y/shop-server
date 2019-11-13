@@ -37,4 +37,9 @@ public class ShopOrderInfoController {
     public R editOrder(@RequestBody ShopOrderInfo shopOrderInfo) {
         return iShopOrderInfoService.editOrder(shopOrderInfo);
     }
+
+    @GetMapping("/getOrderStatus/{status}")
+    public R getOrderStatus(@PathVariable String status){
+        return iShopOrderInfoService.getOrderStatus(status);
+    }
 }

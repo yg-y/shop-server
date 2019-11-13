@@ -173,7 +173,7 @@
 			//加载商品列表
 			getProductList() {
 				uni.request({
-					url: "http://127.0.0.1:1222/shop_api/shop-info/page",
+					url: "/shop_api/shop-info/page",
 					method: 'GET',
 					data: this.page,
 					success: res => {

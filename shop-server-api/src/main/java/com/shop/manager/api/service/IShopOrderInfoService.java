@@ -20,4 +20,6 @@ public interface IShopOrderInfoService extends IService<ShopOrderInfo> {
     R addOrder(ShopOrderInfo shopOrderInfo);
 
     R editOrder(ShopOrderInfo shopOrderInfo);
+
+    R getOrderStatus(String status);
 }

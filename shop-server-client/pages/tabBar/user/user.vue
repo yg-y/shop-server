@@ -4,7 +4,7 @@
 		<view v-if="showHeader" class="header" :style="{position:headerPosition,top:headerTop}">
 			<view class="addr"></view>
 			<view class="input-box">
-				
+
 			</view>
 			<view class="icon-btn">
 				<view class="icon tongzhi" @tap="toMsg"></view>
@@ -17,11 +17,11 @@
 		<view class="user">
 			<!-- 头像 -->
 			<view class="left">
-				<image :src="user.face" @tap="toSetting"></image>
+				<image :src="face" @tap="toSetting"></image>
 			</view>
 			<!-- 昵称,个性签名 -->
 			<view class="right">
-				<view class="username" @tap="toLogin">{{user.username}}</view>
+				<view class="username" @tap="toLogin">{{user.name}}</view>
 				<view class="signature" @tap="toSetting">{{user.signature}}</view>
 			</view>
 			<!-- 二维码按钮 -->
@@ -91,60 +91,105 @@
 	</view>
 </template>
 <script>
-
 	export default {
 		data() {
 			return {
-				isfirst:true,
-				headerPosition:"fixed",
-				headerTop:null,
-				statusTop:null,
-				showHeader:true,
+				isfirst: true,
+				headerPosition: "fixed",
+				headerTop: null,
+				statusTop: null,
+				showHeader: true,
+				face: '/static/img/face.jpg',
 				//个人信息,
-				user:{
-					username:'游客1002',
-					face:'/static/img/face.jpg',
-					signature:'点击昵称跳转登录/注册页',
-					integral:0,
-					balance:0,
-					envelope:0
+				user: {
+					name: '游客1002',
+					face: '/static/img/face.jpg',
+					signature: '点击昵称跳转登录/注册页',
+					integral: 0,
+					balance: 0,
+					envelope: 0
 				},
 				// 订单类型
-				orderList:[
-					{text:'待付款',icon:"fukuan"},
-					{text:'待发货',icon:"fahuo"},
-					{text:'待收货',icon:"shouhuo"},
-					{text:'待评价',icon:"pingjia"},
-					{text:'退换货',icon:"tuihuo"}
+				orderList: [{
+						text: '待付款',
+						icon: "fukuan"
+					},
+					{
+						text: '待发货',
+						icon: "fahuo"
+					},
+					{
+						text: '待收货',
+						icon: "shouhuo"
+					},
+					{
+						text: '待评价',
+						icon: "pingjia"
+					},
+					{
+						text: '退换货',
+						icon: "tuihuo"
+					}
 				],
 				// 工具栏列表
-				mytoolbarList:[
-					{url:'../../user/keep/keep',text:'我的收藏',img:'/static/img/user/point.png'},
-					{url:'../../user/coupon/coupon',text:'优惠券',img:'/static/img/user/quan.png'}, 
-					{url:'',text:'新客豪礼',img:'/static/img/user/renw.png'},
-					{url:'',text:'领红包',img:'/static/img/user/momey.png'},
-					
-					{url:'../../user/address/address',text:'收货地址',img:'/static/img/user/addr.png'},
-					{url:'',text:'账户安全',img:'/static/img/user/security.png'},
-					{url:'',text:'银行卡',img:'/static/img/user/bank.png'},
-					{url:'',text:'抽奖',img:'/static/img/user/choujiang.png'},
+				mytoolbarList: [{
+						url: '../../user/keep/keep',
+						text: '我的收藏',
+						img: '/static/img/user/point.png'
+					},
+					{
+						url: '../../user/coupon/coupon',
+						text: '优惠券',
+						img: '/static/img/user/quan.png'
+					},
+					{
+						url: '',
+						text: '新客豪礼',
+						img: '/static/img/user/renw.png'
+					},
+					{
+						url: '',
+						text: '领红包',
+						img: '/static/img/user/momey.png'
+					},
+
+					{
+						url: '../../user/address/address',
+						text: '收货地址',
+						img: '/static/img/user/addr.png'
+					},
+					{
+						url: '',
+						text: '账户安全',
+						img: '/static/img/user/security.png'
+					},
+					{
+						url: '',
+						text: '银行卡',
+						img: '/static/img/user/bank.png'
+					},
+					{
+						url: '',
+						text: '抽奖',
+						img: '/static/img/user/choujiang.png'
+					},
 					// {text:'客服',img:'/static/img/user/kefu.png'},
 					// {text:'签到',img:'/static/img/user/mingxi.png'}
-					
+
 				]
 			}
 		},
 		//下拉刷新，需要自己在page.json文件中配置开启页面下拉刷新 "enablePullDownRefresh": true
 		onPullDownRefresh() {
-		    setTimeout(function () {
-		        uni.stopPullDownRefresh();
-		    }, 1000);
+			setTimeout(function() {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
-		onPageScroll(e){
+		onPageScroll(e) {
 			//兼容iOS端下拉时顶部漂移
-			this.headerPosition = e.scrollTop>=0?"fixed":"absolute";
-			this.headerTop = e.scrollTop>=0?null:0;
-			this.statusTop = e.scrollTop>=0?null:-this.statusHeight+'px';
+			this.headerPosition = e.scrollTop >= 0 ? "fixed" : "absolute";
+			this.headerTop = e.scrollTop >= 0 ? null : 0;
+			this.statusTop = e.scrollTop >= 0 ? null : -this.statusHeight + 'px';
 		},
 		onLoad() {
 			this.statusHeight = 0;
@@ -152,64 +197,82 @@
 			this.showHeader = false;
 			this.statusHeight = plus.navigator.getStatusbarHeight();
 			// #endif
+			
+			this.getUserInfo()
 		},
-		onReady(){
+		onReady() {
 			//此处，演示,每次页面初次渲染都把登录状态重置
-			uni.setStorage({
-				key: 'UserInfo',
-				data: false,
-				success: function () {
-				},
-				fail:function(e){
-				}
-			});
+			// uni.setStorage({
+			// 	key: 'UserInfo',
+			// 	data: false,
+			// 	success: function() {},
+			// 	fail: function(e) {}
+			// });
 		},
-		onShow(){
+		onShow() {
 			uni.getStorage({
 				key: 'UserInfo',
-				success: (res)=>{
-					if(!res.data){
-						if(this.isfirst){
+				success: (res) => {
+					if (!res.data) {
+						if (this.isfirst) {
 							//this.toLogin();
 						}
-						return ;
+						return;
 					}
 					this.user = res.data;
 				},
-				fail:(e)=>{
+				fail: (e) => {
 					//this.toLogin(); 
 				}
 			});
 		},
 		methods: {
+			//获取用户信息
+			getUserInfo() {
+				uni.request({
+					url: '/shop_api/shop-user/info',
+					method: 'GET',
+					success: res => {
+						this.user = res.data.data
+						this.user.integral = 0
+						this.user.balance = 0
+						this.user.envelope = 0
+					}
+				})
+			},
 			//消息列表
-			toMsg(){
+			toMsg() {
 				uni.navigateTo({
-					url:'../../msg/msg'
+					url: '../../msg/msg'
 				})
 			},
-			toOrderList(index){
-				uni.setStorageSync('tbIndex',index);
-				uni.navigateTo({url:'../../user/order_list/order_list?tbIndex='+index}) 
-			},
-			toSetting(){
+			toOrderList(index) {
+				uni.setStorageSync('tbIndex', index);
 				uni.navigateTo({
-					url:'../../user/setting/setting'
+					url: '../../user/order_list/order_list?tbIndex=' + index
 				})
 			},
-			toMyQR(){
+			toSetting() {
 				uni.navigateTo({
-					url:'../../user/myQR/myQR'
+					url: '../../user/setting/setting'
 				})
 			},
-			toLogin(){
-				uni.showToast({title: '请登录',icon:"none"});
+			toMyQR() {
 				uni.navigateTo({
-					url:'../../login/login'
+					url: '../../user/myQR/myQR'
+				})
+			},
+			toLogin() {
+				uni.showToast({
+					title: '请登录',
+					icon: "none"
+				});
+				uni.navigateTo({
+					url: '../../login/login'
 				})
 				this.isfirst = false;
 			},
-			isLogin(){
+			isLogin() {
 				//实际应用中,用户登录状态应该用token等方法去维持登录状态.
 				const value = uni.getStorageSync('UserInfo');
 				if (value) {
@@ -217,24 +280,32 @@
 				}
 				return false
 			},
-			toDeposit(){
+			toDeposit() {
 				uni.navigateTo({
-					url:'../../user/deposit/deposit'
+					url: '../../user/deposit/deposit'
 				})
 			},
-			toPage(url){
-				if(!url){
-					uni.showToast({title: '模板未包含此页面',icon:"none"});return;
+			toPage(url) {
+				if (!url) {
+					uni.showToast({
+						title: '模板未包含此页面',
+						icon: "none"
+					});
+					return;
 				}
 				uni.navigateTo({
-					url:url
+					url: url
 				})
 			}
 		}
-	} 
+	}
 </script>
 <style lang="scss">
-	page{position: relative;background-color: #fff;}
+	page {
+		position: relative;
+		background-color: #fff;
+	}
+
 	.status {
 		width: 100%;
 		height: 0;
@@ -243,12 +314,12 @@
 		background-color: #f06c7a;
 		top: 0;
 		/*  #ifdef  APP-PLUS  */
-		height: var(--status-bar-height);//覆盖样式
+		height: var(--status-bar-height); //覆盖样式
 		/*  #endif  */
-		
+
 	}
-	
-	.header{
+
+	.header {
 		width: 92%;
 		padding: 0 4%;
 		height: 100upx;
@@ -261,13 +332,15 @@
 		background-color: #f06c7a;
 		/*  #ifdef  APP-PLUS  */
 		top: var(--status-bar-height);
+
 		/*  #endif  */
-		.icon-btn{
+		.icon-btn {
 			width: 120upx;
 			height: 60upx;
 			flex-shrink: 0;
 			display: flex;
-			.icon{
+
+			.icon {
 				color: #fff;
 				width: 60upx;
 				height: 60upx;
@@ -278,17 +351,20 @@
 			}
 		}
 	}
-	.place{
+
+	.place {
 		background-color: #f06c7a;
 		height: 100upx;
 		/*  #ifdef  APP-PLUS  */
 		margin-top: var(--status-bar-height);
 		/*  #endif  */
 	}
-	.place-bottom{
+
+	.place-bottom {
 		height: 300upx;
 	}
-	.user{
+
+	.user {
 		width: 92%;
 		padding: 0 4%;
 		display: flex;
@@ -296,71 +372,84 @@
 		// position: relative;
 		background-color: #f06c7a;
 		padding-bottom: 120upx;
-		.left{
+
+		.left {
 			width: 20vw;
 			height: 20vw;
 			flex-shrink: 0;
 			margin-right: 20upx;
 			border: solid 1upx #fff;
 			border-radius: 100%;
-			image{
+
+			image {
 				width: 20vw;
 				height: 20vw;
 				border-radius: 100%;
 			}
-			
+
 		}
-		.right{
+
+		.right {
 			width: 100%;
-			.username{
+
+			.username {
 				font-size: 36upx;
 				color: #fff;
 			}
-			.signature{
+
+			.signature {
 				color: #eee;
 				font-size: 28upx;
 			}
 		}
-		.erweima{
+
+		.erweima {
 			flex-shrink: 0;
 			width: 10vw;
 			height: 10vw;
 			margin-left: 5vw;
 			border-radius: 100%;
-		
+
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			background: linear-gradient(to left, #fbbb37 0%,#fcf0d0 105%);
-			.icon{
+			background: linear-gradient(to left, #fbbb37 0%, #fcf0d0 105%);
+
+			.icon {
 				color: #7b6335;
 				font-size: 42upx;
 			}
 		}
 	}
-	.order{
+
+	.order {
 		width: 84%;
 		margin: 30upx 4% 30upx 4%;
 		padding: 30upx 4% 20upx 4%;
 		background-color: #fff;
-		box-shadow: 0upx 0upx 25upx rgba(0,0,0,0.1);
+		box-shadow: 0upx 0upx 25upx rgba(0, 0, 0, 0.1);
 		border-radius: 15upx;
-		.list{
+
+		.list {
 			display: flex;
 			border-bottom: solid 1upx #17e6a1;
 			padding-bottom: 10upx;
-			.box{
+
+			.box {
 				width: 20%;
-				.img{
+
+				.img {
 					width: 100%;
 					display: flex;
 					justify-content: center;
-					.icon{
+
+					.icon {
 						font-size: 50upx;
 						color: #464646;
 					}
 				}
-				.text{
+
+				.text {
 					width: 100%;
 					display: flex;
 					justify-content: center;
@@ -369,17 +458,20 @@
 				}
 			}
 		}
-		.balance-info{
+
+		.balance-info {
 			display: flex;
 			padding: 10upx 0;
-			.left{
+
+			.left {
 				width: 75%;
 				display: flex;
-				.box{
+
+				.box {
 					width: 50%;
 					font-size: 28upx;
-					
-					.num{
+
+					.num {
 						width: 100%;
 						height: 50upx;
 						display: flex;
@@ -387,7 +479,8 @@
 						align-items: flex-end;
 						color: #f9a453;
 					}
-					.text{
+
+					.text {
 						width: 100%;
 						display: flex;
 						justify-content: center;
@@ -396,23 +489,27 @@
 					}
 				}
 			}
-			.right{
+
+			.right {
 				border-left: solid 1upx #17e6a1;
 				width: 25%;
-				.box{
-					
-					.img{
+
+				.box {
+
+					.img {
 						width: 100%;
 						height: 50upx;
 						display: flex;
 						justify-content: center;
 						align-items: flex-end;
-						.icon{
+
+						.icon {
 							font-size: 45upx;
 							color: #e78901;
 						}
 					}
-					.text{
+
+					.text {
 						width: 100%;
 						display: flex;
 						justify-content: center;
@@ -423,30 +520,35 @@
 			}
 		}
 	}
-	.VIP{
+
+	.VIP {
 		width: 84%;
 		margin: -65upx auto 20upx auto;
 		padding: 30upx 4%;
-		background: linear-gradient(to left, #dea96d 0%,#f6d59b 100%);
-		box-shadow: 0upx 0upx 25upx rgba(0,0,0,0.2);
+		background: linear-gradient(to left, #dea96d 0%, #f6d59b 100%);
+		box-shadow: 0upx 0upx 25upx rgba(0, 0, 0, 0.2);
 		border-radius: 15upx;
 		display: flex;
 		align-items: center;
-		.img{
+
+		.img {
 			flex-shrink: 0;
 			width: 60upx;
 			height: 60upx;
-			image{
+
+			image {
 				width: 60upx;
 				height: 60upx;
 			}
 		}
-		.title{
+
+		.title {
 			width: 100%;
 			color: #796335;
 			font-size: 30upx;
 		}
-		.tis{
+
+		.tis {
 			width: 100%;
 			display: flex;
 			justify-content: flex-end;
@@ -454,14 +556,16 @@
 			font-size: 26upx;
 		}
 	}
-	.toolbar{
+
+	.toolbar {
 		width: 92%;
 		margin: 0 4% 0 4%;
 		padding: 0 0 20upx 0;
 		background-color: #fff;
-		box-shadow: 0upx 0upx 25upx rgba(0,0,0,0.1);
+		box-shadow: 0upx 0upx 25upx rgba(0, 0, 0, 0.1);
 		border-radius: 15upx;
-		.title{
+
+		.title {
 			padding-top: 10upx;
 			margin: 0 0 10upx 3%;
 			font-size: 30upx;
@@ -469,24 +573,28 @@
 			display: flex;
 			align-items: center;
 		}
-		.list{
+
+		.list {
 			display: flex;
 			flex-wrap: wrap;
-			.box{
+
+			.box {
 				width: 25%;
 				margin-bottom: 30upx;
-				.img{
+
+				.img {
 					width: 23vw;
 					height: 10.5vw;
 					display: flex;
 					justify-content: center;
-					
-					image{
+
+					image {
 						width: 9vw;
 						height: 9vw;
 					}
 				}
-				.text{
+
+				.text {
 					width: 100%;
 					display: flex;
 					justify-content: center;

@@ -28,7 +28,7 @@
 		methods: {
 			toUser() {
 				uni.switchTab({
-					url: '/pages/tabBar/user'
+					url: '../../tabBar/user/user'
 				});
 			}
 		},

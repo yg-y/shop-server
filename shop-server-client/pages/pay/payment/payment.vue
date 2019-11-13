@@ -63,7 +63,8 @@
 				amount: 0,
 				orderName: '',
 				orderInfo: {},
-				paytype: 'alipay' //支付类型
+				paytype: 'alipay', //支付类型
+				orderInfos: []
 			};
 		},
 		onLoad(e) {
@@ -76,8 +77,8 @@
 					} else {
 						this.orderName = e.data[0].name;
 						this.orderInfo = e.data[0]
-						console.log(this.orderInfo)
 					}
+					this.orderInfos = e
 					uni.removeStorage({
 						key: 'paymentOrder'
 					})
@@ -89,31 +90,48 @@
 				//模板模拟支付，实际应用请调起微信/支付宝
 				uni.showLoading({
 					title: '支付中...'
-				});
+				});			
+				let orderIds = []
+				for (let i = 0, j = this.orderInfos.data.length; i < j; i++) {
+					orderIds.push(this.orderInfos.data[i].id);
+				}
 				let orderInfo = {
 					"number": 1,
 					"paymentPrice": this.amount,
-					"shopInfoId": this.orderInfo.id,
-					"status": 1,
-					"userId": 1
+					"ids": orderIds.join(','),
+					"status": 1
 				}
 				uni.request({
-					url: "http://127.0.0.1:1222/shop_api/shop-order-info/add/order",
+					url: "/shop_api/shop-order-info/edit/order",
 					data: orderInfo,
 					method: 'POST',
 					success: res => {
-						console.log(res);
-						setTimeout(() => {
-							uni.hideLoading();
-							uni.showToast({
-								title: '支付成功'
-							});
+						if(res.data.code ===1){
 							setTimeout(() => {
-								uni.redirectTo({
-									url: '../../pay/success/success?amount=' + this.amount
+								uni.hideLoading();
+								uni.showToast({
+									title: '支付成功'
 								});
-							}, 300);
-						}, 100)
+								setTimeout(() => {
+									uni.redirectTo({
+										url: '../../pay/success/success?amount=' + this.amount
+									});
+								}, 300);
+							}, 100)
+						}else{
+							
+							setTimeout(() => {
+								uni.hideLoading();
+								uni.showToast({
+									title: '支付失败'
+								});
+								setTimeout(() => {
+									uni.redirectTo({
+										url: '../../pay/error/error?amount=' + this.amount
+									});
+								}, 300);
+							}, 100)
+						}
 					},
 					fail: () => {
 						uni.showToast({

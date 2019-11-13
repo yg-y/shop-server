@@ -7,6 +7,8 @@ import com.shop.manager.api.entity.OrderInfo;
 import com.shop.manager.entity.ShopOrderInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -18,4 +20,5 @@ import org.apache.ibatis.annotations.Param;
 public interface ShopOrderInfoMapper extends BaseMapper<ShopOrderInfo> {
 
     Page<OrderInfo> page(Page<ShopOrderInfo> page, @Param("ew") QueryWrapper<ShopOrderInfo> queryWrapper);
+    List<OrderInfo> page(@Param("ew") QueryWrapper<ShopOrderInfo> queryWrapper);
 }
