@@ -66,6 +66,7 @@ public class ShopOrderInfoServiceImpl extends ServiceImpl<ShopOrderInfoMapper, S
         for (String shopId : shopIds) {
             ShopInfo shopInfo = iShopInfoService.getById(shopId);
             shopOrderInfo = new ShopOrderInfo();
+            shopOrderInfo.setNumber(1);
             shopOrderInfo.setShopInfoId(shopInfo.getId());
             shopOrderInfo.setPaymentPrice(shopInfo.getPrice());
             shopOrderInfo.setUserId(shopUser.getId());
@@ -101,7 +102,7 @@ public class ShopOrderInfoServiceImpl extends ServiceImpl<ShopOrderInfoMapper, S
     public R getOrderStatus(String status) {
         QueryWrapper<ShopOrderInfo> queryWrapper = new QueryWrapper();
         if (!StringUtils.isEmpty(status)) {
-            queryWrapper.lambda().eq(ShopOrderInfo::getStatus, status);
+            queryWrapper.eq("o.status", status);
         }
         ShopUser shopUser = (ShopUser) httpSession.getAttribute("shop_user_" + httpSession.getId());
         if (shopUser == null) {

@@ -7,7 +7,7 @@
 
 			</view>
 			<view class="icon-btn">
-				<view class="icon tongzhi" @tap="toMsg"></view>
+				<!-- <view class="icon tongzhi" @tap="toMsg"></view> -->
 				<view class="icon setting" @tap="toSetting"></view>
 			</view>
 		</view>
@@ -197,7 +197,7 @@
 			this.showHeader = false;
 			this.statusHeight = plus.navigator.getStatusbarHeight();
 			// #endif
-			
+
 			this.getUserInfo()
 		},
 		onReady() {
@@ -208,6 +208,7 @@
 			// 	success: function() {},
 			// 	fail: function(e) {}
 			// });
+			this.getUserInfo()
 		},
 		onShow() {
 			uni.getStorage({
@@ -233,7 +234,13 @@
 					url: '/shop_api/shop-user/info',
 					method: 'GET',
 					success: res => {
-						this.user = res.data.data
+						if (res.data.code === 0) {
+							this.user = {
+								'name':'请注册/登录'
+							}
+						} else {
+							this.user = res.data.data
+						}
 						this.user.integral = 0
 						this.user.balance = 0
 						this.user.envelope = 0
@@ -263,14 +270,30 @@
 				})
 			},
 			toLogin() {
-				uni.showToast({
-					title: '请登录',
-					icon: "none"
-				});
-				uni.navigateTo({
-					url: '../../login/login'
+				uni.request({
+					url: '/shop_api/shop-user/info',
+					method: 'GET',
+					success: res => {
+						if (res.data.code === 0) {
+							this.user = {
+								'name':'请注册/登录'
+							}
+							uni.showToast({
+								title: '请登录',
+								icon: "none"
+							});
+							uni.navigateTo({
+								url: '../../login/login'
+							})
+							this.isfirst = false;
+						} else {
+							this.user = res.data.data
+						}
+						this.user.integral = 0
+						this.user.balance = 0
+						this.user.envelope = 0
+					}
 				})
-				this.isfirst = false;
 			},
 			isLogin() {
 				//实际应用中,用户登录状态应该用token等方法去维持登录状态.
